@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css">
+</head>
+<head>
+    <title>Editar</title>
+
+    <style>
+    
+        .bg {
+            background-color: #132043;
+        }
+
+        .letra {
+            font-style: italic;
+        }
+
+        .navbar-brand img {
+            width: 180px;
+            height: auto;
+        }
+        .drop-area {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .drop-area.highlight {
+            border-color: #666;
+        }
+        .miniatura-pdf {
+            max-width: 100px; /* Ajuste o tamanho da miniatura conforme necessário */
+            max-height: 100px;
+        }
+    </style>
+
+</head>
+<body class="bg">
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <b>Editar
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="/editar/{{ tipo }}/{{ id }}" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label for="nome">Nome</label>
+                                <input class="form-control" type="text" id="nome" name="nome" value="{{ item.nome }}" required>
+                            </div>
+                            {% if tipo == 'pessoa' %}
+                            <div class="form-group">
+                                <label for="contrato">Contrato</label>
+                                <select class="form-select" id="contrato" name="contrato">
+                                    <option value="SBNM" {% if item.contrato == 'SBNM' %}selected{% endif %}>SBNM</option>
+                                    <option value="SBPC" {% if item.contrato == 'SBPC' %}selected{% endif %}>SBPC</option>
+                                    <option value="SSA" {% if item.contrato == 'SSA' %}selected{% endif %}>SSA</option>
+                                    <option value="UNILAB" {% if item.contrato == 'UNILAB' %}selected{% endif %}>UNILAB</option>
+                                    <option value="VALINHOS" {% if item.contrato == 'VALINHOS' %}selected{% endif %}>VALINHOS</option>
+                                    <option value="SBUF" {% if item.contrato == 'SBUF' %}selected{% endif %}>SBUF</option>
+                                    <option value="PMSt-CENTRO" {% if item.contrato == 'PMSt-CENTRO' %}selected{% endif %}>PMSt-CENTRO</option>
+                                    <option value="PMSt-MORROS" {% if item.contrato == 'PMSt-MORROS' %}selected{% endif %}>PMSt-MORROS</option>
+                                    <option value="PMSt-NOROESTE" {% if item.contrato == 'PMSt-NOROESTE' %}selected{% endif %}>PMSt-NOROESTE</option>
+                                </select>                    
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input class="form-control" type="email" id="email" name="email" value="{{ item.email }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="telefone">Telefone</label>
+                                <input class="form-control" type="text" id="telefone" name="telefone" value="{{ item.telefone }}" oninput="mascara(this, 'telefone')" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="cpf">CPF</label>
+                                <input class="form-control" type="text" id="cpf" name="cpf" value="{{ item.cpf }}" oninput="mascara(this, 'cpf')" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="arquivo">Arquivo:</label>
+                                {% if item.arquivo %}
+                                    <a href="{{ url_for('getFile', filename=item.arquivo) }}" target="_blank">{{ item.arquivo }}</a>
+                                {% else %}
+                                    Nenhum arquivo anexado
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="novo_arquivo">Novo Arquivo</label>
+                                <div class="drop-area" id="novo-arquivo-drop-area">
+                                    Arraste e solte os arquivos aqui<br>
+                                    <small>ou clique para selecionar arquivos</small>
+                                </div>
+                                <div>
+                                    <small>Arquivos selecionados: <span id="novo-arquivo-name"></span></small>
+                                </div>
+                                <input type="file" id="novo_arquivo" name="novo_arquivo" multiple style="display: none;">
+                            </div>
+                            {% endif %}
+                            {% if tipo == 'usuario' %}
+                            <div class="form-group">
+                                <label for="senha">Senha</label>
+                                <input class="form-control" type="password" id="senha" name="senha" value="{{ item.senha }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="role">Role</label>
+                                <select class="form-control" id="role" name="role">
+                                    <option value="" disabled selected>Selecione a função</option>
+                                    <option value="Administrador" {% if item.role == 'Administrador' %}selected{% endif %}>Administrador</option>
+                                    <option value="Usuário" {% if item.role == 'Usuário' %}selected{% endif %}>Usuário</option>
+                                </select>
+                            </div>
+                            {% endif %}
+                            <input type="submit" class="btn btn-primary mt-3" value="Salvar">
+                            <a href="{% if tipo == 'usuario' %}/admin{% else %}/pessoas{% endif %}" class="btn btn-danger mt-3">Voltar</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+
+        function mascara(input, tipo) {
+            var valor = input.value;
+
+            if (isNaN(valor[valor.length - 1])) {
+                input.value = valor.substring(0, valor.length - 1);
+                return;
+            }
+
+            if (tipo === "cpf") {
+                input.setAttribute("maxlength", "14");
+                if (valor.length === 3 || valor.length === 7) {
+                    input.value += ".";
+                }
+                if (valor.length === 11) {
+                    input.value += "-";
+                }
+            }
+
+            if (tipo === "telefone") {
+                if (valor.length === 1) input.value = "(" + input.value;
+                if (valor.length === 3) input.value += ") ";
+                if (valor[6] === "9") {
+                    input.setAttribute("maxlength", "15");
+                    if (valor.length === 10) input.value += "-";
+                    {
+                        input.value += "-";
+                    }
+                } else {
+                    input.setAttribute("maxlength", "14");
+                    if (valor.length === 9) {
+                        input.value += "-";
+                    }
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var dropArea = document.getElementById('arquivo-drop-area');
+            var fileInput = document.getElementById('arquivo');
+            var fileNameElement = document.getElementById('arquivo-name');
+
+            dropArea.addEventListener('dragenter', handleDragEnter, false);
+            dropArea.addEventListener('dragover', handleDragOver, false);
+            dropArea.addEventListener('dragleave', handleDragLeave, false);
+            dropArea.addEventListener('drop', handleDrop, false);
+            dropArea.addEventListener('click', openFileSelector, false);
+            fileInput.addEventListener('change', handleFileSelect, false);
+
+            function handleDragEnter(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dropArea.classList.add('highlight');
+            }
+
+            function handleDragOver(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            function handleDragLeave(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dropArea.classList.remove('highlight');
+            }
+
+            function handleDrop(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dropArea.classList.remove('highlight');
+                var dt = e.dataTransfer;
+                var files = dt.files;
+                handleFiles(files);
+            }
+
+            function openFileSelector() {
+                fileInput.click();
+            }
+
+            function handleFileSelect(e) {
+                var files = e.target.files;
+                handleFiles(files);
+            }
+
+            function handleFiles(files) {
+                if (files.length > 0) {
+                    fileNameElement.innerText = '';
+                    Array.from(files).forEach(function(file) {
+                        fileNameElement.innerText += file.name + ', ';
+                    });
+                    fileNameElement.innerText = fileNameElement.innerText.slice(0, -2);
+                } else {
+                    fileNameElement.innerText = 'Nenhum arquivo selecionado';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

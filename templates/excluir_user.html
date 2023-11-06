@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Excluir Usuário</title>
+</head>
+<body>
+    <h1>Excluir Usuário</h1>
+    
+    <form action="{{ url_for('excluir', id=user.id) }}" method="POST">
+        <p>Você está prestes a excluir o usuário "{{ user.nome }}".</p>
+        <p>Tem certeza de que deseja continuar?</p>
+        <button type="submit">Excluir</button>
+    </form>
+    <form action="{{ url_for('excluir', id=pessoa.id) }}" method="POST">
+        <p>Você está prestes a excluir o usuário "{{ user.nome }}".</p>
+        <p>Tem certeza de que deseja continuar?</p>
+        <button type="submit">Excluir</button>
+    </form>
+</body>
+</html>

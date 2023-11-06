@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+        integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.13/jspdf.plugin.autotable.min.js"></script>
+
+
+
+    <title>Lista de Pessoas</title>
+
+    <style>
+        .navbar-custom {
+            background-color: #f0f0f0;
+            /* Defina a cor desejada para o menu */
+        }
+
+        .navbar {
+            background-image: url('');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+        }
+
+        .navbar-brand {
+            margin-right: 100px;
+            margin-left: 100px;
+        }
+
+        .navbar-brand img {
+            width: 180px;
+            height: auto;
+        }
+
+        .letra {
+            font-style: normal;
+        }
+
+        .telefone {
+            width: 20%;
+        }
+
+        
+    </style>
+</head>
+
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-custom bg-white no-print">
+        <div class="container letra">
+            <a class="navbar-brand">
+                <img src="{{ url_for( 'static', filename='stagliorio_logomarca.png') }}">
+            </a>
+            <button class="navbar-toggler no-print" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link text-primary" href="/home">INÍCIO</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-primary" href="/index">FORMULÁRIO DE CADASTRO</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-primary" href="/pessoas">LISTA DE PESSOAS</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-primary" href="/admin">ADMINISTRAÇÃO</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    {% if session.nome_usuario %}
+                    <li class="nav-item">
+                        <a class="nav-link text-primary">
+                            {{ session.nome_usuario }}
+                            <!-- Exibe a primeira letra do nome do usuário -->
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/" class="bi bi-door-open nav-link text-danger"></a>
+                    </li>
+                    {% else %}
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="container col-md-6 mt-4">
+            <div class="row">
+                <div class="col">
+                    <a class="d-none d-print-block">
+                        <img src="{{ url_for( 'static', filename='stagliorio_logomarca.png') }}" alt="Imagem de impressão" style="max-width: 100px;">
+                    </a>
+                    <br>
+                    <h1>Lista de Pessoas Cadastradas</h1>
+                    <!-- Seu conteúdo aqui -->
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="input-group no-print">
+            <input type="text" id="barraPesquisa" class="form-control" placeholder="Pesquisar por nome">
+            <button class="btn btn-primary" onclick="filtrarPorNome()">Pesquisar</button>
+        </div>
+        <label for="filtroContrato" class="no-print">Filtrar por Contrato:</label>
+        <select class="form-select no-print" id="filtroContrato" onchange="filtrarPessoas()">
+            <option value="">Todos</option>
+            <option value="SBNM">SBNM</option>
+            <option value="SBPC">SBPC</option>
+            <option value="SSA">SSA</option>
+            <option value="UNILAB">UNILAB</option>
+            <option value="VALINHOS">VALINHOS</option>
+            <option value="SBUF">SBUF</option>
+            <option value="PMSt-CENTRO">PMSt-CENTRO</option>
+            <option value="PMSt-MORROS">PMSt-MORROS</option>
+            <option value="PMSt-NOROESTE">PMSt-NOROESTE</option>
+        </select>
+        <table class="table table-responsive table-hover table-striped table-bordered  mx-auto" id="tabela">
+            <thead class="topo-tabela-geral">
+                <tr>
+                    <th>Nome</th>
+                    <th>Contrato</th>
+                    <th>Email</th>
+                    <th>Telefone</th>
+                    <th>CPF</th>
+                    <th class="no-print">Editar</th>
+                    <th class="no-print">Excluir</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pessoa in pessoas %}
+                <tr data-contrato="{{ pessoa.contrato|lower }}" data-dataModificacao="{{ pessoa.dataModificacao }}">
+                    <td>{{ pessoa.nome }}</td>
+                    <td>{{ pessoa.contrato }}</td>
+                    <td>{{ pessoa.email }}</td>
+                    <td class="telefone">{{ pessoa.telefone }}</td>
+                    <td>{{ pessoa.cpf }}</td>
+                    <td class="no-print">
+                        <form action="{{ url_for('editar', tipo='pessoa', id=pessoa.id) }}" method="GET">
+                            <button type="submit" class="btn btn-link">
+                                <i class="fas fa-pencil-alt"></i>
+                            </button>
+                        </form>
+                    </td>
+                    <td class="no-print">
+                        <form action="{{ url_for('excluir', tipo='pessoa', id=pessoa.id) }}" method="POST">
+                            <input type="hidden" name="id" value="{{ pessoa.id }}">
+                            <button type="submit" class="btn btn-link">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <button class="btn btn-primary mt-3 no-print" onclick="imprimirRelatorio()">Imprimir Relatório</button>
+    </div>
+
+<script>
+// Função para filtrar pessoas por nome
+function filtrarPorNome() {
+            const inputPesquisa = document.getElementById('barraPesquisa');
+            const termoPesquisa = inputPesquisa.value.toLowerCase();
+            const linhasPessoas = document.querySelectorAll('tbody tr');
+
+            linhasPessoas.forEach(function (linhaPessoa) {
+                const nomePessoa = linhaPessoa.querySelector('td:first-child').textContent.toLowerCase();
+                if (nomePessoa.includes(termoPesquisa)) {
+                    linhaPessoa.style.display = '';
+                } else {
+                    linhaPessoa.style.display = 'none';
+                }
+            });
+        }
+
+function imprimirRelatorio() {
+    // Oculta os elementos com a classe 'no-print'
+    const elementosNoPrint = document.querySelectorAll('.no-print');
+    elementosNoPrint.forEach(function (elemento) {
+        elemento.style.display = 'none';
+    });
+
+    // Chama a função de impressão do navegador
+    window.print();
+
+    // Restaura a visibilidade dos elementos ocultos
+    elementosNoPrint.forEach(function (elemento) {
+        elemento.style.display = '';
+    });
+}
+
+// Função para filtrar pessoas com base no contrato selecionado
+function filtrarPessoas() {
+    const filtroContrato = document.getElementById('filtroContrato').value.toLowerCase();
+    const linhasPessoas = document.querySelectorAll('tbody tr');
+
+    linhasPessoas.forEach(function (linhaPessoa) {
+        const contrato = linhaPessoa.getAttribute('data-contrato');
+
+        if (filtroContrato === '' || contrato === filtroContrato) {
+            linhaPessoa.style.display = '';
+        } else {
+            linhaPessoa.style.display = 'none';
+        }
+    });
+}
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Excluir Arquivo</title>
+</head>
+<body>
+    <h1>Excluir Arquivo</h1>
+    <p>Tem certeza de que deseja excluir este arquivo?</p>
+    <form method="POST" action="/excluir_arquivo">
+        <input type="hidden" name="id" value="{{ id }}">
+        <button type="submit" class="btn btn-danger">Sim, Excluir</button>
+        <a href="/pessoas" class="btn btn-primary">Cancelar</a>
+    </form>
+</body>
+</html>

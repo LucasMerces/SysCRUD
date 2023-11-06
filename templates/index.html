@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+<head>
+    <title>Formulário de Cadastro</title>
+
+    <style>
+        .navbar-custom {
+            background-color: #f0f0f0; /* Defina a cor desejada para o menu */
+        }
+        .navbar {
+            background-image: url('');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+        }
+        .navbar-brand {
+            margin-right: 100px;
+            margin-left: 100px;
+        }
+        .letra {
+            font-style: normal;
+        }
+
+        .navbar-brand img {
+            width: 180px;
+            height: auto;
+        }
+        .drop-area {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .drop-area.highlight {
+            border-color: #666;
+        }
+    </style>
+    
+</head>
+
+<body class="bg-light">
+
+    <nav class="navbar navbar-expand-lg navbar-custom bg-white ">
+        <div class="container letra">
+            <a class="navbar-brand">
+                <img src="{{ url_for( 'static', filename='stagliorio_logomarca.png') }}">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link text-primary" href="/home">INÍCIO</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-primary" href="/index">FORMULÁRIO DE CADASTRO</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-primary" href="/pessoas">LISTA DE PESSOAS</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-primary" href="/admin">ADMINISTRAÇÃO</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    {% if session.nome_usuario %}
+                    <li class="nav-item">
+                        <a class="nav-link text-primary">
+                            {{ session.nome_usuario }} 
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                       <a href="/" class="bi bi-door-open nav-link text-danger"></a>
+                    </li>
+                    {% else %}
+                    {% endif %}
+                </ul>
+            </div>
+        </li>
+        </div>
+    </nav>
+
+
+    <div class="card container bg-light mt-5">
+        <br>
+        <div class="form-group">
+            <form method="POST" action="#" enctype="multipart/form-data" onsubmit="exibirMensagem(); return false;">
+                <div class="form-group">
+                    <label for="name"><b>Nome</label>
+                    <input class="form-control" type="text" id="name" name="name" placeholder="Digite seu nome" required>
+                </div>
+                <div class="form-group">
+                    <label for="filtrocontrato">Contrato</label>
+                    <select class="form-select" id="filtroContratoCadastro" name="contrato" onchange="updateContract()">
+                        <option value="">Todos</option>
+                        <option value="SBNM">SBNM</option>
+                        <option value="SBPC">SBPC</option>
+                        <option value="SSA">SSA</option>
+                        <option value="UNILAB">UNILAB</option>
+                        <option value="VALINHOS">VALINHOS</option>
+                        <option value="SBUF">SBUF</option>
+                        <option value="PMSt-CENTRO">PMSt-CENTRO</option>
+                        <option value="PMSt-MORROS">PMSt-MORROS</option>
+                        <option value="PMSt-NOROESTE">PMSt-NOROESTE</option>
+                     </select>
+                </div>
+                <input type="hidden" id="contratoSelecionadoCadastro" name="contrato" value="">
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input class="form-control" type="email" id="email" name="email" placeholder="Digite seu email" required>
+                </div>
+                <div class="form-group">
+                    <label for="number">Telefone</label>
+                    <input class="form-control" type="text" id="number" name="number" placeholder="Digite seu telefone" oninput="mascara(this, 'telefone')" required>
+                </div>
+                <div class="form-group">
+                    <label for="cpf">CPF</label>
+                    <input class="form-control" type="text" id="cpf" name="cpf" placeholder="Digite seu CPF" oninput="mascara(this, 'cpf')" required>
+                </div>
+                <div class="form-group">
+                    <label for="arquivo">Arquivos</label>
+                    <div class="drop-area" id="arquivo-drop-area">
+                        Arraste e solte os arquivos aqui<br>
+                        <small>ou clique para selecionar arquivos</small>
+                    </div>
+                    
+                    <div>
+                        <small>Arquivos selecionados: <span id="arquivo-name"></span></small>
+                    </div>
+                    <input type="file" id="arquivo" name="arquivo" multiple style="display: none;">
+                </div>
+                <input id="form-submit-btn" class="btn btn-primary mt-3" type="submit" value="Enviar">
+            </form>
+        </div>
+    </div>
+
+            <style>
+        .drop-area {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .drop-area.highlight {
+            border-color: #666;
+        }
+    </style>
+
+    <script>
+        function mascara(input, tipo) {
+        var valor = input.value;
+
+        if (isNaN(valor[valor.length - 1])) {
+            input.value = valor.substring(0, valor.length - 1);
+            return;
+        }
+
+        if (tipo === "cpf") {
+            input.setAttribute("maxlength", "14");
+            if (valor.length === 3 || valor.length === 7) {
+                input.value += ".";
+            }
+            if (valor.length === 11) {
+                input.value += "-";
+            }
+        }
+
+        if (tipo === "telefone") {
+            if (valor.length === 1) input.value = "(" + input.value;
+            if (valor.length === 3) input.value += ") ";
+            if (valor[6] === "9") {
+                input.setAttribute("maxlength", "15");
+                if (valor.length === 10) input.value += "-";{
+                    input.value += "-";
+                }
+            } else {
+                input.setAttribute("maxlength", "14");
+                if (valor.length === 9) {
+                    input.value += "-";
+                }
+            }
+        }
+    }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var dropArea = document.getElementById('arquivo-drop-area');
+            var fileInput = document.getElementById('arquivo');
+            var fileNameElement = document.getElementById('arquivo-name');
+
+            dropArea.addEventListener('dragenter', handleDragEnter, false);
+            dropArea.addEventListener('dragover', handleDragOver, false);
+            dropArea.addEventListener('dragleave', handleDragLeave, false);
+            dropArea.addEventListener('drop', handleDrop, false);
+            dropArea.addEventListener('click', openFileSelector, false);
+            fileInput.addEventListener('change', handleFileSelect, false);
+
+            function handleDragEnter(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dropArea.classList.add('highlight');
+            }
+
+            function handleDragOver(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            function handleDragLeave(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dropArea.classList.remove('highlight');
+            }
+
+            function handleDrop(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dropArea.classList.remove('highlight');
+                var dt = e.dataTransfer;
+                var files = dt.files;
+                handleFiles(files);
+            }
+
+            function openFileSelector() {
+                fileInput.click();
+            }
+
+            function handleFileSelect(e) {
+                var files = e.target.files;
+                handleFiles(files);
+}
+
+            function handleFiles(files) {
+                if (files.length > 0) {
+                    fileNameElement.innerText = '';
+                    Array.from(files).forEach(function(file) {
+                    fileNameElement.innerText += file.name + ', ';
+               });
+                    fileNameElement.innerText = fileNameElement.innerText.slice(0, -2);
+                } else {
+                    fileNameElement.innerText = 'Nenhum arquivo selecionado';
+                }
+            }
+        });
+
+       function updateContract() {
+        var contratoSelecionadoCadastro = document.getElementById('filtroContratoCadastro').value;
+        document.getElementById('contratoSelecionadoCadastro').value = contratoSelecionadoCadastro;
+    }
+    </script>
+</body>
+</html>

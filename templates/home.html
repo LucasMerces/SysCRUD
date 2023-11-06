@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.7/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.7/dist/sweetalert2.all.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <title>Início</title>
+
+    <style>
+        .navbar-custom {
+            background-color: #f0f0f0; /* Defina a cor desejada para o menu */
+        }
+
+        .navbar {
+            background-image: url('');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+        }
+
+        .navbar-brand {
+            margin-right: 100px;
+            margin-left: 100px;
+        }
+
+        .navbar-brand img {
+            width: 180px;
+            height: auto;
+        }
+
+        .letra {
+            font-style: normal;
+        }
+
+        .carousel {
+            width: 100%;
+            height: 100vh; /* Altura da tela inteira */
+            overflow: hidden;
+        }
+
+        .carousel-inner {
+            text-align: center;
+            height: 100%; /* 100% da altura do carousel */
+        }
+
+        .carousel-inner img {
+            width: 100%; /* Largura máxima de 100% */
+            height: auto; /* Altura automática para manter a proporção */
+            object-fit: cover; /* Cubra todo o espaço do carousel */
+        }
+
+        .carousel-control-prev,
+        .carousel-control-next {
+            background-color: transparent;
+        }
+
+        .carousel-indicators {
+            bottom: 10px; /* Posição das indicações de slides na parte inferior */
+        }
+
+        .carousel-indicators li {
+            background-color: transparent;
+            border: 1px solid #fff; /* Cor da borda das indicações */
+            margin-right: 10px; /* Espaço entre as indicações */
+            width: 15px; /* Largura das indicações */
+            height: 2px; /* Altura das indicações */
+        }
+
+        .carousel-indicators .active {
+            background-color: #fff; /* Cor de fundo da indicação ativa */
+        }
+
+        .container-content {
+            position: relative;
+            z-index: 2;
+        }
+
+    </style>
+</head>
+
+<body class="bg-light">
+
+    <nav class="navbar navbar-expand-lg navbar-custom bg-white">
+        <div class="container letra">
+            <a class="navbar-brand">
+                <img src="{{ url_for( 'static', filename='stagliorio_logomarca.png') }}">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link text-primary" href="/home">INÍCIO</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-primary" href="/index">FORMULÁRIO DE CADASTRO</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-primary" href="/pessoas">LISTA DE PESSOAS</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-primary" href="/admin">ADMINISTRAÇÃO</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    {% if session.nome_usuario %}
+                    <li class="nav-item">
+                        <a class="nav-link text-primary">
+                            {{ session.nome_usuario }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/" class="bi bi-door-open nav-link text-danger"></a>
+                    </li>
+                    {% else %}
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Conteúdo da página -->
+    <div class="container-content">
+        <div id="myCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active ">
+                    <img src="{{ url_for( 'static', filename='S.png' ) }}" alt="Imagem 1">
+                </div>
+                <div class="carousel-item">
+                    <img src="{{ url_for('static', filename='salvador.jpg') }}" alt="Imagem 2">
+                </div>
+                <div class="carousel-item">
+                    <img src="{{ url_for('static', filename='salvadorr.jpg') }}" alt="Imagem 3">
+                </div>
+                <div class="carousel-item">
+                    <img src="{{ url_for('static', filename='i.jpg') }}" alt="Imagem 4">
+                </div>
+            </div>
+            <a class="carousel-control-prev" href="#myCarousel" role="button" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only"></span>
+            </a>
+            <a class="carousel-control-next" href="#myCarousel" role="button" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only"></span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            // Inicie o slideshow
+            $('#myCarousel').carousel();
+
+            // Troque para a próxima imagem a cada 5 segundos (ajuste conforme necessário)
+            setInterval(function () {
+                $('#myCarousel').carousel('next');
+            }, 5000); // 5000 milissegundos = 5 segundos
+        });
+    </script>
+</body>
+
+</html>

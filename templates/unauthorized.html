@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Acesso não autorizado</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css">
+</head>
+<body>
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Acesso não autorizado',
+            text: 'Você não tem permissão para acessar esta página.',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            // Redirecionar o usuário para a página inicial após o alerta ser fechado
+            window.location.href = '/home';
+        });
+    </script>
+</body>
+</html>
